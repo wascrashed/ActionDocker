@@ -30,9 +30,9 @@ services:
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
-                 POSTGRES_USER: 'posgres'
-                 POSTGRES_PASSWORD: 'root'
-                 POSTGRES_DB: 'laravel'
+            POSTGRES_USER: 'posgres'
+            POSTGRES_PASSWORD: 'root'
+            POSTGRES_DB: 'laravel'
         volumes:
             - 'postgres:/var/lib/postgresql/data'
 volumes:
