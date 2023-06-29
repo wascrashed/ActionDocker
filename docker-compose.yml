@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  proxy:
+    container_name: proxy
+    image: nginx:1.19
+    ports:
+      - "8000:80"
+    depends_on:
+      - jornal_action
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+
+  jornal_action:
+    container_name: jornal_action
+    restart: unless-stopped
+    build:
+      context: ./jornal_action
+      dockerfile: Dockerfile
+    working_dir: /app
+    environment:
+      - VIRTUAL_HOST=ja.fanexpress.local
+      - VIRTUAL_PORT=8000
+    command: ["./start-php.sh"]
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgresql_db
+    image: postgres:latest
+    restart: always
+    ports:
+      - '${FORWARD_DB_PORT:-5432}:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'root'
+      POSTGRES_DB: 'laravel'
+    volumes:
+      - .database/pgdata:/var/lib/postgresql/data
+
+volumes:
+  postgres:
+    driver: local
